@@ -96,7 +96,7 @@ class _CompanyCard extends StatelessWidget {
         onTap: () {
           // يمكن هنا الانتقال إلى صفحة تفاصيل الشركة أو عروضها
           Get.snackbar(
-            'تم الضغط على',
+            'تم اختيار على',
             company.name,
             snackPosition: SnackPosition.BOTTOM,
           );

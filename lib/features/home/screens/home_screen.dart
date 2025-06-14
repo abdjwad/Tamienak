@@ -429,7 +429,7 @@ class _InsuranceTypeCard extends StatelessWidget {
       child: InkWell(
         onTap: () {
 
-          Get.toNamed(Routes.COMPANY_LIST, arguments: type);
+          Get.toNamed(Routes.QUOTE_REQUEST, arguments: type);
 
         },
         borderRadius: BorderRadius.circular(20),
