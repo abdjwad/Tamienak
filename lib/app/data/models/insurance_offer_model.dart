@@ -1,31 +1,27 @@
-// app/data/models/insurance_offer_model.dart
+// lib/app/data/models/insurance_offer_model.dart
 
 class InsuranceOffer {
-
+  final String offerId;
   final String companyName;
   final String companyLogoUrl;
   final double annualPrice;
-  final List<String> coverageDetails; // التغطيات الرئيسية
-  final String offerId;
+  final List<String> coverageDetails;
+  final Map<String, String> detailedCoverage;
+  final List<String> requiredDocuments;
+  final String termsAndConditionsUrl;
   final bool isBestValue;
-
-  // *** حقول جديدة تمت إضافتها ***
-  final Map<String, String> detailedCoverage; // تغطيات مفصلة (العنوان والوصف)
-  final List<String> requiredDocuments; // المستندات المطلوبة
-  final String termsAndConditionsUrl; // رابط الشروط والأحكام
+  bool isActive; // <--- الحقل الجديد
 
   InsuranceOffer({
-
+    required this.offerId,
     required this.companyName,
     required this.companyLogoUrl,
     required this.annualPrice,
     required this.coverageDetails,
-    required this.offerId,
+    this.detailedCoverage = const {},
+    this.requiredDocuments = const [],
+    this.termsAndConditionsUrl = '',
     this.isBestValue = false,
-
-    // *** إضافة الحقول الجديدة إلى الـ constructor ***
-    required this.detailedCoverage,
-    required this.requiredDocuments,
-    required this.termsAndConditionsUrl,
+    this.isActive = true, required List extraBenefits, // <--- القيمة الافتراضية
   });
 }

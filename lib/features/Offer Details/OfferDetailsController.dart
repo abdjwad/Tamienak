@@ -1,22 +1,45 @@
 // presentation/modules/offer_details/controllers/offer_details_controller.dart
-
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tamienk/app/routes/app_routes.dart';
+import 'package:palette_generator/palette_generator.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../app/data/models/insurance_offer_model.dart';
-import 'package:url_launcher/url_launcher.dart'; // <-- هذا السطر يجب أن يكون موجوداً
-
+import '../../../app/routes/app_pages.dart';
+import '../../app/routes/app_routes.dart';
 
 class OfferDetailsController extends GetxController {
   late final InsuranceOffer offer;
+  var isLoading = true.obs;
+
+  // --- الإضافات الجديدة هنا ---
+  Rx<Color> dominantColor = Rx<Color>(Colors.grey.shade800);
+  Rx<Color> vibrantColor = Rx<Color>(Colors.blue.shade800);
 
   @override
   void onInit() {
     super.onInit();
-    // استلام كائن العرض من الشاشة السابقة
     offer = Get.arguments as InsuranceOffer;
+    _updatePalette(); // استدعاء دالة استخلاص الألوان
   }
 
-  // دالة لفتح رابط الشروط والأحكام
+  // دالة لاستخلاص الألوان من صورة شعار الشركة
+  Future<void> _updatePalette() async {
+    try {
+      final PaletteGenerator paletteGenerator = await PaletteGenerator.fromImageProvider(
+        NetworkImage(offer.companyLogoUrl),
+        size: const Size(100, 100), // حجم صغير لتحليل أسرع
+      );
+      dominantColor.value = paletteGenerator.dominantColor?.color ?? Get.theme.primaryColor;
+      vibrantColor.value = paletteGenerator.vibrantColor?.color ?? Get.theme.colorScheme.secondary;
+    } catch (e) {
+      // استخدام ألوان افتراضية في حالة حدوث خطأ
+      dominantColor.value = Get.theme.primaryColor;
+      vibrantColor.value = Get.theme.colorScheme.secondary;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   void launchTermsUrl() async {
     final Uri url = Uri.parse(offer.termsAndConditionsUrl);
     if (!await launchUrl(url)) {
@@ -24,7 +47,6 @@ class OfferDetailsController extends GetxController {
     }
   }
 
-  // دالة للتقديم على الطلب
   void applyForOffer() {
     Get.toNamed(Routes.APPLICATION_FORM, arguments: offer);
   }

@@ -4,6 +4,7 @@ class InsuranceType {
   final String id;
   final String name;
   final IconData icon;
+  final String description;
 
-  InsuranceType({required this.id, required this.name, required this.icon});
+  InsuranceType( {required this.description,required this.id, required this.name, required this.icon});
 }

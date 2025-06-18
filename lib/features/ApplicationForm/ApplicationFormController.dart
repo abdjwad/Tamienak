@@ -65,7 +65,7 @@ class ApplicationFormController extends GetxController {
         detailedCoverage: {'لا توجد تفاصيل': 'لا توجد'},
         requiredDocuments: ['لا توجد وثائق'],
         termsAndConditionsUrl: 'https://www.google.com',
-        isBestValue: false,
+        isBestValue: false, extraBenefits: [],
       );
       Get.snackbar('خطأ', 'لم يتم استلام تفاصيل العرض. يرجى المحاولة مرة أخرى.',
           snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red.withOpacity(0.7), colorText: Colors.white);

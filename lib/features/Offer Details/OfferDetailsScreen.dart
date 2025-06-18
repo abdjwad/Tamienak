@@ -1,5 +1,5 @@
 // presentation/modules/offer_details/screens/offer_details_screen.dart
-
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -7,259 +7,295 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import 'OfferDetailsController.dart';
 
+
 class OfferDetailsScreen extends GetView<OfferDetailsController> {
   const OfferDetailsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.share_outlined)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.favorite_border_outlined)),
+        ],
+      ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return Stack(
+          children: [
+            // الخلفية الديناميكية
+            _buildAnimatedBackground(),
+            // المحتوى
+            _buildContent(context),
+          ],
+        );
+      }),
+      bottomNavigationBar: _buildApplyButton(),
+    );
+  }
+
+  Widget _buildAnimatedBackground() {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 500),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            controller.dominantColor.value.withOpacity(0.6),
+            Colors.black,
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            top: -100,
+            right: -100,
+            child: Opacity(
+              opacity: 0.1,
+              child: Image.network(
+                controller.offer.companyLogoUrl,
+                width: 400,
+                height: 400,
+                errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        // --- رأس الصفحة البطل (Hero Section) ---
+        SliverToBoxAdapter(
+          child: _buildHeaderSection(),
+        ),
+        // --- جسم الصفحة (بطاقات المعلومات) ---
+        SliverList(
+          delegate: SliverChildListDelegate(
+            [
+              _buildSection(
+                title: "لماذا تختار هذا العرض؟",
+                child: _buildWhyChooseUs(),
+              ),
+              _buildSection(
+                title: "أبرز التغطيات",
+                child: _buildCoverageHighlights(),
+              ),
+              _buildSection(
+                title: "التقييمات والآراء",
+                child: _buildReviewsSection(),
+              ),
+              const SizedBox(height: 120), // مساحة للزر العائم
+            ]
+                .animate(interval: 100.ms)
+                .fadeIn(duration: 500.ms)
+                .slideY(begin: 0.2, curve: Curves.easeOutCubic),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeaderSection() {
+    final theme = Get.theme;
     final formatCurrency = NumberFormat.currency(locale: 'ar_SY', symbol: 'ل.س', decimalDigits: 0);
 
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 250.0, // زيادة الارتفاع لجاذبية أكثر
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
-              title: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    controller.offer.companyName,
-                    style: const TextStyle(shadows: [Shadow(blurRadius: 8)]),
-                  ),
-                  if (controller.offer.isBestValue) // إضافة شارة "الأفضل قيمة"
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Chip(
-                        label: const Text(
-                          "الأفضل قيمة",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        backgroundColor: Colors.amber.shade700,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        padding: EdgeInsets.zero,
-                      ),
-                    ),
-                ],
-              ),
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.network(
-                    controller.offer.companyLogoUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        Center(child: Icon(Icons.broken_image, size: 60, color: theme.colorScheme.onSurface.withOpacity(0.5))),
-                  ),
-                  Container( // تدرج لوني لتحسين وضوح النص
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black.withOpacity(0.6),
-                          Colors.black.withOpacity(0.2),
-                          Colors.transparent,
-                          Colors.black.withOpacity(0.6),
-                        ],
-                        stops: const [0.0, 0.4, 0.6, 1.0],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // --- قسم السعر (مع تحسين التصميم) ---
-                  Card(
-                    elevation: 4,
-                    margin: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Column(
-                            children: [
-                              Text("السعر السنوي", style: theme.textTheme.titleMedium),
-                              Text(
-                                formatCurrency.format(controller.offer.annualPrice),
-                                style: theme.textTheme.displaySmall?.copyWith(
-                                  color: colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: -0.5,
-                                ),
-                              ),
-                              Text("شامل الضرائب والرسوم", style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey.shade600)),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ).animate().fadeIn(duration: 600.ms, delay: 100.ms)
-                      .scale(begin: const Offset(0.8, 0.8), curve: Curves.easeOutCubic) // <--- تم التعديل هنا (begin: Offset)
-                      .slideY(), // <--- تم إزالة الفاصلة التي كانت هنا في السطر السابق
-                  const SizedBox(height: 24),
-
-                  // --- قسم تفاصيل التغطية ---
-                  _buildSectionHeader(context, "تفاصيل التغطية", Icons.verified_user_outlined),
-                  // تم تعديل طريقة تطبيق الانيميشن ليكون على كل عنصر على حدة
-                  ...controller.offer.detailedCoverage.entries.toList().asMap().entries.map((mapEntry) {
-                    final int index = mapEntry.key;
-                    final entry = mapEntry.value;
-                    return _buildCoverageTile(context, entry.key, entry.value)
-                        .animate() // animate تُطبق على الودجيت الفردي
-                        .fadeIn(duration: 400.ms, delay: (100 * index).ms) // تطبيق تأخير لكل عنصر
-                        .slideX(); // <--- تم التعديل هنا (begin: Offset)
-                  }).toList(), // هذا الـ .toList() يقوم بجمع الودجيتات المتحركة
-                  const SizedBox(height: 24),
-
-                  // --- قسم المستندات المطلوبة ---
-                  _buildSectionHeader(context, "المستندات المطلوبة", Icons.article_outlined),
-                  // تم تعديل طريقة تطبيق الانيميشن ليكون على كل عنصر على حدة
-                  ...controller.offer.requiredDocuments.asMap().entries.map((mapEntry) {
-                    final int index = mapEntry.key;
-                    final doc = mapEntry.value;
-                    return _buildDocumentTile(context, doc)
-                        .animate() // animate تُطبق على الودجيت الفردي
-                        .fadeIn(duration: 400.ms, delay: (100 * index).ms) // إضافة تأخير للحركة المتتالية
-                        .slideX(); // <--- تم التعديل هنا (begin: Offset)
-                  }).toList(),
-                  const SizedBox(height: 24),
-
-                  // --- رابط الشروط والأحكام (زر محسّن) ---
-                  Center(
-                    child: OutlinedButton.icon(
-                      onPressed: controller.launchTermsUrl,
-                      icon: const Icon(Icons.description_outlined),
-                      label: const Text("قراءة الشروط والأحكام الكاملة"),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: colorScheme.primary,
-                        side: BorderSide(color: colorScheme.primary.withOpacity(0.7)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-      // --- زر التقديم العائم ---
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ElevatedButton.icon(
-          icon: const Icon(Icons.check_circle_outline),
-          label: const Text("التقديم على هذا العرض"),
-          onPressed: controller.applyForOffer,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: colorScheme.primary, // استخدام لون الثيم الأساسي
-            foregroundColor: colorScheme.onPrimary,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            elevation: 8,
-          ),
-        ).animate() // animate تُطبق مباشرة على الـ ElevatedButton
-            .slideY( duration: 600.ms, curve: Curves.easeOut), // <--- تم التأكد من هذا السطر
-      ),
-    );
-  }
-
-  // --- ويدجتس مساعدة للتصميم (تم تحسينها) ---
-
-  Widget _buildSectionHeader(BuildContext context, String title, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Row(
-        children: [
-          Icon(icon, color: Theme.of(context).colorScheme.primary, size: 28),
-          const SizedBox(width: 12),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCoverageTile(BuildContext context, String title, String subtitle) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return SafeArea(
+      bottom: false,
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
+        padding: const EdgeInsets.fromLTRB(20, 80, 20, 20),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.check_circle_outline, color: Theme.of(context).colorScheme.primary, size: 24),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade700),
-                  ),
-                ],
+            Image.network(
+                controller.offer.companyLogoUrl,
+                height: 80,
+                errorBuilder: (c,e,s) => const SizedBox.shrink()
+            ).animate().slideX(begin: -0.5).fadeIn(),
+            const SizedBox(height: 16),
+            Text(
+              "تأمين شامل لسيارتك مع ${controller.offer.companyName}", // مثال لعنوان جذاب
+              style: theme.textTheme.displaySmall?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                height: 1.2,
               ),
+            ).animate(delay: 200.ms).slideX(begin: -0.5).fadeIn(),
+            const SizedBox(height: 12),
+            Text(
+              "ابتداءً من",
+              style: theme.textTheme.titleMedium?.copyWith(color: Colors.white70),
             ),
+            Text(
+              formatCurrency.format(controller.offer.annualPrice),
+              style: theme.textTheme.displayMedium?.copyWith(
+                color: controller.vibrantColor.value,
+                fontWeight: FontWeight.w900,
+              ),
+            ).animate(delay: 400.ms).fadeIn(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDocumentTile(BuildContext context, String docName) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      elevation: 0, // لا حاجة لظلال كثيرة هنا
-      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        child: Row(
-          children: [
-            Icon(Icons.file_copy_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                docName,
-                style: Theme.of(context).textTheme.bodyLarge,
+  Widget _buildSection({required String title, required Widget child}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: Get.theme.textTheme.headlineSmall?.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWhyChooseUs() {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _FeatureChip(icon: Icons.support_agent, label: "خدمة 24/7"),
+        _FeatureChip(icon: Icons.verified, label: "شركة موثوقة"),
+        _FeatureChip(icon: Icons.speed, label: "موافقات سريعة"),
+      ],
+    );
+  }
+
+  Widget _buildCoverageHighlights() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: controller.offer.coverageDetails.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 2.5,
+      ),
+      itemBuilder: (context, index) {
+        final detail = controller.offer.coverageDetails[index];
+        return _GlassCard(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.check_circle_outline, color: controller.vibrantColor.value, size: 20),
+              const SizedBox(width: 8),
+              Expanded(child: Text(detail, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600))),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildReviewsSection() {
+    final theme = Get.theme;
+    return _GlassCard(
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        children: [
+          Column(
+            children: [
+              Text("4.8", style: theme.textTheme.headlineMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+              Row(
+                children: List.generate(5, (i) => Icon(i < 4 ? Icons.star_rounded : Icons.star_half_rounded, color: Colors.amber, size: 18)),
               ),
+              const Text("من 250 تقييم", style: TextStyle(color: Colors.white70)),
+            ],
+          ),
+          const VerticalDivider(width: 32, thickness: 1, color: Colors.white24),
+          const Expanded(
+            child: Text(
+              '"خدمة ممتازة وسرعة في الاستجابة. أوصي بهم بشدة!"',
+              style: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
             ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildApplyButton() {
+    return Container(
+      padding: const EdgeInsets.all(16).copyWith(bottom: Get.mediaQuery.padding.bottom + 8),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.3),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 20, spreadRadius: 5)
+        ],
+      ),
+      child: Obx(() => ElevatedButton.icon(
+        icon: const Icon(Icons.check_circle_outline),
+        label: const Text("التقديم على هذا العرض"),
+        onPressed: controller.applyForOffer,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: controller.vibrantColor.value,
+          foregroundColor: Colors.white,
+          minimumSize: const Size.fromHeight(55),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
+      )),
+    ).animate().slideY(begin: 1, duration: 500.ms, curve: Curves.easeOutCubic);
+  }
+}
+
+// === ويدجتس مساعدة جديدة للتصميم ===
+
+class _GlassCard extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  const _GlassCard({Key? key, required this.child, this.padding}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: Container(
+          padding: padding ?? const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.white.withOpacity(0.2)),
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+class _FeatureChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  const _FeatureChip({Key? key, required this.icon, required this.label}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return _GlassCard(
+      child: Column(
+        children: [
+          Icon(icon, color: Colors.white, size: 28),
+          const SizedBox(height: 8),
+          Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        ],
       ),
     );
   }

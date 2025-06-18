@@ -1,28 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../app/data/enums/user_role.dart';
 import '../../../app/routes/app_routes.dart';
 
 class RegisterController extends GetxController {
   final formKey = GlobalKey<FormState>();
 
+  // الحقول العامة
   late TextEditingController nameController;
   late TextEditingController emailController;
   late TextEditingController passwordController;
   late TextEditingController confirmPasswordController;
 
+  // الحقول الخاصة بمقدم الخدمة
+  late TextEditingController licenseNumberController;
+  late TextEditingController licenseIssuerController;
+  late TextEditingController experienceYearsController;
+
+  // الحالة
   var isLoading = false.obs;
   var isPasswordHidden = true.obs;
-
-  // <-- متغير جديد لتشغيل حركة الاهتزاز عند الخطأ
   var registerErrorAnimation = false.obs;
+
+  // الدور المختار
+  var selectedRole = UserRole.beneficiary.obs;
+
+  // نوع المهنة المختار
+  var selectedProfession = RxnString();
+  List<String> professionTypes = [
+    'طبيب',
+    'مشفى',
+    'مختبر',
+    'شركة تأمين',
+  ];
 
   @override
   void onInit() {
     super.onInit();
+
+    // تهيئة الحقول
     nameController = TextEditingController();
     emailController = TextEditingController();
     passwordController = TextEditingController();
     confirmPasswordController = TextEditingController();
+
+    licenseNumberController = TextEditingController();
+    licenseIssuerController = TextEditingController();
+    experienceYearsController = TextEditingController();
   }
 
   @override
@@ -31,6 +55,11 @@ class RegisterController extends GetxController {
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+
+    licenseNumberController.dispose();
+    licenseIssuerController.dispose();
+    experienceYearsController.dispose();
+
     super.onClose();
   }
 
@@ -39,34 +68,51 @@ class RegisterController extends GetxController {
   }
 
   Future<void> register() async {
-    if (formKey.currentState!.validate()) {
-      try {
-        isLoading.value = true;
-        await Future.delayed(const Duration(seconds: 2));
+    final isFormValid = formKey.currentState?.validate() ?? false;
+    if (!isFormValid) {
+      registerErrorAnimation.toggle();
+      return;
+    }
 
-        // --- محاكاة خطأ في التسجيل لعرض الحركة ---
-        Get.offAllNamed(Routes.HOME);
-
-        // في حال النجاح
-        // Get.offAllNamed(Routes.HOME);
-
-      } catch (e) {
-        // --- هنا نشغل حركة الاهتزاز ---
-        registerErrorAnimation.value = !registerErrorAnimation.value;
-
+    // تحقق إضافي لمقدم الخدمة
+    if (selectedRole.value == UserRole.serviceProvider) {
+      if (selectedProfession.value == null ||
+          licenseNumberController.text.isEmpty ||
+          licenseIssuerController.text.isEmpty ||
+          experienceYearsController.text.isEmpty) {
+        registerErrorAnimation.toggle();
         Get.snackbar(
-          'خطأ في التسجيل',
-          'حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى.',
+          'بيانات ناقصة',
+          'يرجى تعبئة كافة الحقول الخاصة بمقدم الخدمة.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.orange,
           colorText: Colors.white,
         );
-      } finally {
-        isLoading.value = false;
+        return;
       }
-    } else {
-      // إذا كانت الحقول غير صالحة، شغل الحركة أيضاً
-      registerErrorAnimation.value = !registerErrorAnimation.value;
+    }
+
+    try {
+      isLoading.value = true;
+      await Future.delayed(const Duration(seconds: 2));
+
+      // تخزين وهمي / توجيه حسب الدور
+      if (selectedRole.value == UserRole.serviceProvider) {
+        Get.offAllNamed(Routes.SERVICE_PROVIDER_DASHBOARD);
+      } else {
+        Get.offAllNamed(Routes.HOME);
+      }
+    } catch (e) {
+      registerErrorAnimation.toggle();
+      Get.snackbar(
+        'خطأ في التسجيل',
+        'حدث خطأ غير متوقع، حاول مرة أخرى.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
     }
   }
 }

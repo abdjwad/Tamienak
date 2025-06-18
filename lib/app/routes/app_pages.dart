@@ -7,14 +7,21 @@ import 'package:tamienk/features/Offer%20Details/OfferDetailsScreen.dart';
 import 'package:tamienk/features/Offers%20Comparison%20Screen/OffersComparisonBinding.dart';
 import 'package:tamienk/features/company_list/company_list_binding.dart';
 import 'package:tamienk/features/company_list/company_list_screen.dart';
+import 'package:tamienk/features/final_comparison_screen/FinalComparisonScreen.dart';
 import 'package:tamienk/features/register/bindings/register_binding.dart';
+import 'package:tamienk/features/service_provider_dashboard/ServiceProviderDashboardBinding.dart';
+import 'package:tamienk/features/service_provider_dashboard/ServiceProviderDashboardScreen.dart';
 import '../../features/Offers Comparison Screen/OffersComparisonScreen.dart';
 import '../../features/Quote Request Screen/QuoteRequestBinding.dart';
 import '../../features/Quote Request Screen/QuoteRequestScreen.dart';
+import '../../features/auth/screens/welcome_screen.dart';
+import '../../features/final_comparison_screen/FinalComparisonBinding.dart';
 import '../../features/home/bindings/home_binding.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/login/bindings/login_binding.dart'; // <-- Import binding
 import '../../features/login/screens/login_screen.dart';   // <-- Import screen
+import '../../features/offer_form/offer_form_binding.dart';
+import '../../features/offer_form/offer_form_screen.dart';
 import '../../features/register/screens/register_screen.dart';
 import 'app_routes.dart';
 
@@ -28,6 +35,13 @@ class AppPages {
       page: () => const HomeScreen(),
       binding: HomeBinding(),
     ),
+    GetPage(
+      name: Routes.WELCOME, // <--- أضف مسارًا للشاشة الجديدة
+      page: () => const WelcomeScreen(),
+    ), GetPage(
+      name: Routes.WELCOME, // <--- أضف مسارًا للشاشة الجديدة
+      page: () => const WelcomeScreen(),
+    ),
     // Add the new GetPage for the login screen
     GetPage(
       name: Routes.LOGIN,
@@ -38,7 +52,17 @@ class AppPages {
       name: Routes.REGISTER,
       page: () => const RegisterScreen(),
       binding: RegisterBinding(),
-    ), // <-- أضف هذا الجزء
+    ),
+    GetPage(
+      name: Routes.SERVICE_PROVIDER_DASHBOARD, // <--- الجديد
+      page: () => const ServiceProviderDashboardScreen(),
+      binding: ServiceProviderDashboardBinding(),
+    ),
+    GetPage( // <--- الجديد
+      name: Routes.OFFER_FORM,
+      page: () => const OfferFormScreen(),
+      binding: OfferFormBinding(),
+    ),// <-- أضف هذا الجزء
     GetPage( // <-- أضف هذه الصفحة الجديدة
       name: Routes.COMPANY_LIST,
       page: () => const CompanyListScreen(),
@@ -49,6 +73,11 @@ class AppPages {
       name: Routes.QUOTE_REQUEST,
       page: () => QuoteRequestScreen(),
       binding: QuoteRequestBinding(), // سنقوم بإنشاء هذا
+    ),GetPage(
+      name: Routes.FINAL_COMPARISON,
+      page: () => const FinalComparisonScreen(),
+      binding: FinalComparisonBinding(), // <--- أضف الـ Binding الجديد
+      transition: Transition.downToUp, // تأثير انتقال جميل
     ),
     GetPage(
       name: Routes.OFFERS_COMPARISON,
@@ -59,8 +88,8 @@ class AppPages {
     GetPage(
       name: Routes.OFFER_DETAILS,
       page: () => const OfferDetailsScreen(),
-      binding: OfferDetailsBinding(), // سننشئ هذا الملف لاحقاً
-      transition: Transition.downToUp, // تأثير انتقال جميل مناسب لهذه الشاشة
+      binding: OfferDetailsBinding(),
+      transition: Transition.downToUp,
     ),
     GetPage(
       name: Routes.OFFERS_COMPARISON,
@@ -72,7 +101,7 @@ class AppPages {
       page: () => const OfferDetailsScreen(),
       binding: OfferDetailsBinding(),
     ),
-    GetPage( // <--- أضف هذا المسار الجديد
+    GetPage(
       name: Routes.APPLICATION_FORM,
       page: () => const ApplicationFormScreen(),
       binding: ApplicationFormBinding(),
