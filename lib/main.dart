@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart'; // <--- هذا هو الاستيراد الصحيح
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'app/routes/app_pages.dart';
 import 'app/routes/app_routes.dart';
 
@@ -41,10 +42,15 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
-      initialRoute: Routes.WELCOME, // أو أي مسار بداية تريده
+      initialRoute: Routes.APPLICATION_FORM, // أو أي مسار بداية تريده
       getPages: AppPages.routes,
       locale: const Locale('ar'),
       fallbackLocale: const Locale('ar'),
+      localizationsDelegates: const [ // <-- إضافة هذا الجزء مهم جداً
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
     );
   }
 }

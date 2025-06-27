@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../app/data/enums/user_role.dart';
-import '../../../app/routes/app_routes.dart';
+import 'package:tamienk/app/data/enums/user_role.dart';
+import 'package:tamienk/app/routes/app_routes.dart';
+
 
 class RegisterController extends GetxController {
   final formKey = GlobalKey<FormState>();

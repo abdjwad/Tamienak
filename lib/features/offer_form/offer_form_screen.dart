@@ -24,7 +24,7 @@ class OfferFormScreen extends GetView<OfferFormController> {
               Text("معلومات العرض الأساسية", style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               TextFormField(
-                controller: controller.offerNameController,
+                controller: controller.offerIdController,
                 decoration: const InputDecoration(labelText: 'اسم/معرّف العرض', border: OutlineInputBorder()),
                 validator: (value) => value!.isEmpty ? 'هذا الحقل مطلوب' : null,
               ),

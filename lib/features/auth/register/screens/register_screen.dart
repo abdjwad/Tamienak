@@ -2,8 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../app/data/enums/user_role.dart';
-import '../../../app/routes/app_routes.dart';
+import 'package:tamienk/app/data/enums/user_role.dart';
+
 import '../controllers/register_controller.dart';
 
 // ثابت للمسافات العمودية لضمان التناسق

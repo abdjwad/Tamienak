@@ -5,24 +5,24 @@ import 'package:tamienk/features/ApplicationForm/ApplicationFormScreen.dart';
 import 'package:tamienk/features/Offer%20Details/OfferDetailsBinding.dart';
 import 'package:tamienk/features/Offer%20Details/OfferDetailsScreen.dart';
 import 'package:tamienk/features/Offers%20Comparison%20Screen/OffersComparisonBinding.dart';
+import 'package:tamienk/features/auth/register/bindings/register_binding.dart';
+import 'package:tamienk/features/auth/register/screens/register_screen.dart';
 import 'package:tamienk/features/company_list/company_list_binding.dart';
 import 'package:tamienk/features/company_list/company_list_screen.dart';
 import 'package:tamienk/features/final_comparison_screen/FinalComparisonScreen.dart';
-import 'package:tamienk/features/register/bindings/register_binding.dart';
 import 'package:tamienk/features/service_provider_dashboard/ServiceProviderDashboardBinding.dart';
 import 'package:tamienk/features/service_provider_dashboard/ServiceProviderDashboardScreen.dart';
 import '../../features/Offers Comparison Screen/OffersComparisonScreen.dart';
 import '../../features/Quote Request Screen/QuoteRequestBinding.dart';
 import '../../features/Quote Request Screen/QuoteRequestScreen.dart';
+import '../../features/auth/login/bindings/login_binding.dart';
+import '../../features/auth/login/screens/login_screen.dart';
 import '../../features/auth/screens/welcome_screen.dart';
 import '../../features/final_comparison_screen/FinalComparisonBinding.dart';
 import '../../features/home/bindings/home_binding.dart';
 import '../../features/home/screens/home_screen.dart';
-import '../../features/login/bindings/login_binding.dart'; // <-- Import binding
-import '../../features/login/screens/login_screen.dart';   // <-- Import screen
 import '../../features/offer_form/offer_form_binding.dart';
 import '../../features/offer_form/offer_form_screen.dart';
-import '../../features/register/screens/register_screen.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -38,7 +38,8 @@ class AppPages {
     GetPage(
       name: Routes.WELCOME, // <--- أضف مسارًا للشاشة الجديدة
       page: () => const WelcomeScreen(),
-    ), GetPage(
+    ),
+    GetPage(
       name: Routes.WELCOME, // <--- أضف مسارًا للشاشة الجديدة
       page: () => const WelcomeScreen(),
     ),
@@ -58,12 +59,14 @@ class AppPages {
       page: () => const ServiceProviderDashboardScreen(),
       binding: ServiceProviderDashboardBinding(),
     ),
-    GetPage( // <--- الجديد
+    GetPage(
+      // <--- الجديد
       name: Routes.OFFER_FORM,
       page: () => const OfferFormScreen(),
       binding: OfferFormBinding(),
-    ),// <-- أضف هذا الجزء
-    GetPage( // <-- أضف هذه الصفحة الجديدة
+    ), // <-- أضف هذا الجزء
+    GetPage(
+      // <-- أضف هذه الصفحة الجديدة
       name: Routes.COMPANY_LIST,
       page: () => const CompanyListScreen(),
       binding: CompanyListBinding(),
@@ -73,7 +76,8 @@ class AppPages {
       name: Routes.QUOTE_REQUEST,
       page: () => QuoteRequestScreen(),
       binding: QuoteRequestBinding(), // سنقوم بإنشاء هذا
-    ),GetPage(
+    ),
+    GetPage(
       name: Routes.FINAL_COMPARISON,
       page: () => const FinalComparisonScreen(),
       binding: FinalComparisonBinding(), // <--- أضف الـ Binding الجديد
@@ -83,7 +87,8 @@ class AppPages {
       name: Routes.OFFERS_COMPARISON,
       page: () => const OffersComparisonScreen(),
       binding: OffersComparisonBinding(), // <--- هذه هي التعليمة الحاسمة
-      transition: Transition.rightToLeftWithFade, // <--- يمكنك إضافة تأثير انتقال جميل
+      transition:
+          Transition.rightToLeftWithFade, // <--- يمكنك إضافة تأثير انتقال جميل
     ),
     GetPage(
       name: Routes.OFFER_DETAILS,
@@ -106,6 +111,5 @@ class AppPages {
       page: () => const ApplicationFormScreen(),
       binding: ApplicationFormBinding(),
     ),
-
   ];
 }

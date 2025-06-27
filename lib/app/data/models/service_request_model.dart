@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-// ... (ServiceRequestStatus و ServiceRequestStatusExtension كما هي) ...
 enum ServiceRequestStatus {
   pending,
   inProgress,
@@ -34,11 +33,11 @@ extension ServiceRequestStatusExtension on ServiceRequestStatus {
 
   IconData get icon {
     switch (this) {
-      case ServiceRequestStatus.pending: return Icons.hourglass_empty;
-      case ServiceRequestStatus.inProgress: return Icons.settings_applications;
-      case ServiceRequestStatus.approved: return Icons.check_circle_outline;
-      case ServiceRequestStatus.rejected: return Icons.cancel_outlined;
-      case ServiceRequestStatus.completed: return Icons.done_all;
+      case ServiceRequestStatus.pending: return Icons.hourglass_top_rounded;
+      case ServiceRequestStatus.inProgress: return Icons.sync_rounded;
+      case ServiceRequestStatus.approved: return Icons.check_circle_rounded;
+      case ServiceRequestStatus.rejected: return Icons.cancel_rounded;
+      case ServiceRequestStatus.completed: return Icons.task_alt_rounded;
     }
   }
 }
@@ -46,7 +45,7 @@ extension ServiceRequestStatusExtension on ServiceRequestStatus {
 class ServiceRequest {
   final String id;
   final String applicantName;
-  final String? applicantImageUrl; // <--- أضف هذا الحقل
+  final String? applicantImageUrl;
   final String insuranceType;
   final DateTime requestDate;
   final ServiceRequestStatus status;
@@ -55,7 +54,7 @@ class ServiceRequest {
   ServiceRequest({
     required this.id,
     required this.applicantName,
-    this.applicantImageUrl, // <--- اجعله اختيارياً
+    this.applicantImageUrl,
     required this.insuranceType,
     required this.requestDate,
     this.status = ServiceRequestStatus.pending,
