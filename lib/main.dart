@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
-      initialRoute: Routes.APPLICATION_FORM, // أو أي مسار بداية تريده
+      initialRoute: Routes.HOME, // أو أي مسار بداية تريده
       getPages: AppPages.routes,
       locale: const Locale('ar'),
       fallbackLocale: const Locale('ar'),

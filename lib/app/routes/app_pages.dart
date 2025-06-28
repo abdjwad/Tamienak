@@ -10,6 +10,8 @@ import 'package:tamienk/features/auth/register/screens/register_screen.dart';
 import 'package:tamienk/features/company_list/company_list_binding.dart';
 import 'package:tamienk/features/company_list/company_list_screen.dart';
 import 'package:tamienk/features/final_comparison_screen/FinalComparisonScreen.dart';
+import 'package:tamienk/features/payment/PaymentBinding.dart';
+import 'package:tamienk/features/payment/PaymentScreen.dart';
 import 'package:tamienk/features/service_provider_dashboard/ServiceProviderDashboardBinding.dart';
 import 'package:tamienk/features/service_provider_dashboard/ServiceProviderDashboardScreen.dart';
 import '../../features/Offers Comparison Screen/OffersComparisonScreen.dart';
@@ -89,6 +91,12 @@ class AppPages {
       binding: OffersComparisonBinding(), // <--- هذه هي التعليمة الحاسمة
       transition:
           Transition.rightToLeftWithFade, // <--- يمكنك إضافة تأثير انتقال جميل
+    ),
+    GetPage(
+      name: Routes.PAYMENT,
+      page: () => PaymentScreen(),
+      binding: PaymentBinding(),
+      transition: Transition.rightToLeftWithFade, // حركة انتقال جميلة
     ),
     GetPage(
       name: Routes.OFFER_DETAILS,

@@ -77,12 +77,20 @@ class HomeController extends GetxController {
 
   void showNotificationsSheet() {
     Get.bottomSheet(
+      // لا تغيير هنا
       NotificationsSheetWidget(notifications: notifications),
-      backgroundColor: Get.theme.scaffoldBackgroundColor,
+
+      backgroundColor: Get.theme.scaffoldBackgroundColor, // <--- هذا السطر يجب حذفه
+
+      // لا تغيير هنا
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       isScrollControlled: true,
+
+      // (إضافة اختيارية) لجعل خلفية التطبيق معتمة عند ظهور الورقة
+      barrierColor: Colors.black.withOpacity(0.4),
+
     );
   }
 
