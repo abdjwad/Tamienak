@@ -5,6 +5,8 @@ abstract class Routes {
   static const LOGIN = '/login';
   static const REGISTER = '/register';
   static const COMPANY_LIST = '/company-list';
+  static const String COMPANY_DETAILS = '/company-details';
+
   static const PROFILE = '/profile';
   static const QUOTE_REQUEST = '/quote-request';
   static const FINAL_COMPARISON = '/final-comparison';

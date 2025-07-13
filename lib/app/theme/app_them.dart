@@ -72,11 +72,11 @@ class AppTheme {
       ),
     ),
 
-    cardTheme: CardTheme(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: Colors.white,
-    ),
+    // cardTheme: CardTheme(
+    //   elevation: 2,
+    //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    //   color: Colors.white,
+    // ),
   );
 
   // --- تعريف الثيم الداكن (Dark Theme) ---
@@ -133,10 +133,10 @@ class AppTheme {
       ),
     ),
 
-    cardTheme: CardTheme(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: cardDark,
-    ),
+    // cardTheme: CardTheme(
+    //   elevation: 2,
+    //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    //   color: cardDark,
+    // ),
   );
 }

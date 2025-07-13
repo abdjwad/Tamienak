@@ -1,15 +1,19 @@
+// مسار الملف: lib/app/data/models/user_policy_model.dart
+
+import 'package:flutter/material.dart';
+
 enum PolicyStatus { active, pending, expired }
 
 class UserPolicy {
   final String policyName;
   final String companyName;
   final PolicyStatus status;
-  final String iconAsset; // e.g., 'assets/icons/car.png'
+  final IconData iconData; // تمت إضافة هذا الحقل
 
   UserPolicy({
     required this.policyName,
     required this.companyName,
     required this.status,
-    required this.iconAsset,
+    required this.iconData, // تمت إضافة هذا الحقل
   });
 }

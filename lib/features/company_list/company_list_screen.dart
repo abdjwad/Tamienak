@@ -1,7 +1,11 @@
+// مسار الملف: lib/features/company_list/screens/company_list_screen.dart
+
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
-import 'package:tamienk/features/company_list/company_list_controller.dart';
 import '../../../app/data/models/company_model.dart';
+import '../../../app/routes/app_routes.dart';
+import 'company_list_controller.dart' show CompanyListController;
 
 class CompanyListScreen extends GetView<CompanyListController> {
   const CompanyListScreen({Key? key}) : super(key: key);
@@ -11,23 +15,14 @@ class CompanyListScreen extends GetView<CompanyListController> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "شركات ${controller.selectedInsuranceType.name}",
+        // استخدام Obx لجعل العنوان متجاوباً مع المتحكم
+        title: Obx(() => Text(
+          controller.appBarTitle.value,
           style: theme.textTheme.titleLarge?.copyWith(
-            color: theme.appBarTheme.foregroundColor,
             fontWeight: FontWeight.bold,
           ),
-        ),
-        // لإعطاء شكل أفضل للـ AppBar
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [theme.colorScheme.primary, theme.colorScheme.secondary],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
+        )),
+        centerTitle: true,
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -39,11 +34,13 @@ class CompanyListScreen extends GetView<CompanyListController> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.business_center_sharp, size: 80, color: Colors.grey[400]),
+                Icon(Icons.business_center_sharp,
+                    size: 80, color: Colors.grey[400]),
                 const SizedBox(height: 16),
                 Text(
                   "لا توجد شركات لهذا النوع حالياً",
-                  style: theme.textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
+                  style: theme.textTheme.titleMedium
+                      ?.copyWith(color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -51,12 +48,14 @@ class CompanyListScreen extends GetView<CompanyListController> {
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.all(16.0),
           itemCount: controller.filteredCompanies.length,
           itemBuilder: (context, index) {
             final company = controller.filteredCompanies[index];
-            // استخدام Animation لجعل الدخول سلساً
-            return _CompanyCard(company: company, index: index);
+            return _CompanyCard(company: company)
+                .animate()
+                .fadeIn(duration: 400.ms, delay: (100 * index).ms)
+                .slideY(begin: 0.2, curve: Curves.easeOutCubic);
           },
         );
       }),
@@ -66,17 +65,18 @@ class CompanyListScreen extends GetView<CompanyListController> {
 
 // ويدجت خاصة ببطاقة الشركة لجعل الكود نظيفاً
 class _CompanyCard extends StatelessWidget {
-  const _CompanyCard({Key? key, required this.company, required this.index}) : super(key: key);
+  const _CompanyCard({Key? key, required this.company}) : super(key: key);
 
   final Company company;
-  final int index;
 
   // ويدجت صغيرة لعرض النجوم
   Widget _buildRatingStars(double rating, BuildContext context) {
     List<Widget> stars = [];
     for (int i = 0; i < 5; i++) {
       stars.add(Icon(
-        i < rating ? (i < rating - 0.5 ? Icons.star : Icons.star_half) : Icons.star_border,
+        i < rating
+            ? (i < rating - 0.5 ? Icons.star : Icons.star_half)
+            : Icons.star_border,
         color: Colors.amber,
         size: 18,
       ));
@@ -90,16 +90,13 @@ class _CompanyCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
       elevation: 4,
-      shadowColor: theme.colorScheme.primary.withOpacity(0.2),
+      shadowColor: theme.colorScheme.primary.withOpacity(0.1),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
+        // [UPGRADE] تغيير وجهة الضغط إلى شاشة تفاصيل الشركة
         onTap: () {
-          // يمكن هنا الانتقال إلى صفحة تفاصيل الشركة أو عروضها
-          Get.snackbar(
-            'تم اختيار على',
-            company.name,
-            snackPosition: SnackPosition.BOTTOM,
-          );
+          // نمرر كائن الشركة بالكامل إلى الشاشة التالية
+          Get.toNamed(Routes.COMPANY_DETAILS, arguments: company);
         },
         borderRadius: BorderRadius.circular(16),
         child: Padding(
@@ -114,6 +111,8 @@ class _CompanyCard extends StatelessWidget {
                   width: 70,
                   height: 70,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                  const Icon(Icons.business_center, size: 70),
                 ),
               ),
               const SizedBox(width: 16),
@@ -124,14 +123,17 @@ class _CompanyCard extends StatelessWidget {
                   children: [
                     Text(
                       company.name,
-                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     _buildRatingStars(company.rating, context),
                     const SizedBox(height: 8),
                     Text(
                       company.description,
-                      style: theme.textTheme.bodySmall?.copyWith(color: theme.textTheme.bodySmall?.color?.withOpacity(0.7)),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.textTheme.bodySmall?.color
+                              ?.withOpacity(0.7)),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -140,7 +142,8 @@ class _CompanyCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               // أيقونة الانتقال
-              Icon(Icons.arrow_forward_ios_rounded, color: theme.colorScheme.primary),
+              Icon(Icons.arrow_forward_ios_rounded,
+                  color: theme.colorScheme.primary.withOpacity(0.7)),
             ],
           ),
         ),

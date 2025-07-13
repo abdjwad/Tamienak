@@ -20,6 +20,8 @@ import '../../features/Quote Request Screen/QuoteRequestScreen.dart';
 import '../../features/auth/login/bindings/login_binding.dart';
 import '../../features/auth/login/screens/login_screen.dart';
 import '../../features/auth/screens/welcome_screen.dart';
+import '../../features/company_details/company_details_binding.dart' show CompanyDetailsBinding;
+import '../../features/company_details/company_details_screen.dart' show CompanyDetailsScreen;
 import '../../features/final_comparison_screen/FinalComparisonBinding.dart';
 import '../../features/home/bindings/home_binding.dart';
 import '../../features/home/screens/home_screen.dart';
@@ -91,6 +93,11 @@ class AppPages {
       binding: OffersComparisonBinding(), // <--- هذه هي التعليمة الحاسمة
       transition:
           Transition.rightToLeftWithFade, // <--- يمكنك إضافة تأثير انتقال جميل
+    ),
+    GetPage(
+      name:Routes.COMPANY_DETAILS,
+      page: () => const CompanyDetailsScreen(),
+      binding: CompanyDetailsBinding(), // سيتم إنشاؤه في الخطوة التالية
     ),
     GetPage(
       name: Routes.PAYMENT,
